@@ -24,7 +24,7 @@ type Lista[T any] interface {
 	Largo() int
 
 	// Iterar crea un iterador de la lista interno.
-	Iterar(visitar func(T) bool)
+	//Iterar(visitar func(T) bool)
 
 	// Iterador crea un iterador de la lista externo.Si está vacía, entra en pánico con un mensaje "La lista esta vacia".
 	Iterador() IteradorLista[T]

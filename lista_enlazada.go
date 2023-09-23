@@ -28,20 +28,20 @@ func crearNodo[T any](dato T) *nodoLista[T] {
 }
 
 // Largo devuelve la cantidad de elementos de la lista.
-func (l *listaEnlazada)Largo() int{
+func (l *listaEnlazada[T])Largo() int{
 	return l.largo
 }
 
 // EstaVacia devuelve verdadero si la lista no tiene elementos encolados, false en caso contrario.
-func (l *listaEnlazada)EstaVacia() bool{
+func (l *listaEnlazada[T])EstaVacia() bool{
 	return l.Largo() == 0
 }
 
 // InsertarPrimero agrega un nuevo elemento a le lista en el primer lugar.
 
-func (l *listaEnlazada)InsertarPrimero(dato T){
+func (l *listaEnlazada[T])InsertarPrimero(dato T){
 	nodo := crearNodo(dato)
-	if l.estaVacia(){
+	if l.EstaVacia(){
 		l.ultimo = nodo
 	} else{
 		nodo.prox= l.primero
@@ -51,10 +51,10 @@ func (l *listaEnlazada)InsertarPrimero(dato T){
 }
 
 // InsertarUltimo agrega un nuevo elemento a le lista en el último lugar.
-func (l *listaEnlazada)InsertarUltimo(dato T){
+func (l *listaEnlazada[T])InsertarUltimo(dato T){
 	nodo := crearNodo(dato)
 
-	if l.estaVacia(){
+	if l.EstaVacia(){
 		l.primero = nodo
 	}else{
 		l.ultimo.prox = nodo
@@ -64,52 +64,53 @@ func (l *listaEnlazada)InsertarUltimo(dato T){
 }
 
 // VerPrimero devuelve el valor del primer elemento de la lista. Si está vacía, entra en pánico con un mensaje "La lista esta vacia".
-func (l *listaEnlazada) VerPrimero() T{
-	if l.estaVacia(){
-		panic("La lista esta vacía")
+func (l *listaEnlazada[T]) VerPrimero() T{
+	if l.EstaVacia(){
+		panic("La lista esta vacia")
 	}
 	return l.primero.dato
 }
 
 // VerUltimo devuelve el valor del ultimo elemento de la lista.Si está vacía, entra en pánico con un mensaje "La lista esta vacia".
-func (l *listaEnlazada) VerUltimo() T{
-	if l.estaVacia(){
-		panic("La lista esta vacía")
+func (l *listaEnlazada[T]) VerUltimo() T{
+	if l.EstaVacia(){
+		panic("La lista esta vacia")
 	}
 	return l.ultimo.dato
 }
 
 // BorrarPrimero borra el primer elemento de la lista y devuelve ese valor.  Si está vacía, entra en pánico con un mensaje "La lista esta vacia".
-func (l *listaEnlazada) BorrarPrimero() T{
-	if l.estaVacia(){
+func (l *listaEnlazada[T]) BorrarPrimero() T{
+	if l.EstaVacia(){
 		panic("La lista esta vacia")
 	}
-	primero := l.VerPrimero()
-	l.primero = primero.prox
+	prime := l.primero
+	l.primero = prime.prox
 	l.largo --
 
-	return primero.dato
+	return prime.dato
 }
 
 // Iterador crea un iterador de la lista externo.
-func (l *listaEnlazada) Iterador() IteradorLista[T]{
+func (l *listaEnlazada[T]) Iterador() IteradorLista[T]{
 	if l.EstaVacia(){
 		panic("La lista esta vacia") 
 	}
-	return &iterador{l.VerPrimero(),nil,l.Largo()}
+	
+	return &iterador[T]{l.primero,nil,l.Largo()}
 }
 
 // VerActual devuelve el elemento en donde este posicionado el iterador.
-func (i *iterador) VerActual() T{
+func (i *iterador[T]) VerActual() T{
 	if !i.HaySiguiente(){
 		panic("El iterador termino de iterar")
 	}
-	return i.primero.dato  
+	return i.actual.dato  
 }
 
 
 // Siguiente modifica la posicion del iterador al siguiente elemento.
-func (i *iterador) Siguiente(){
+func (i *iterador[T]) Siguiente(){
 	if !i.HaySiguiente(){
 		panic("El iterador termino de iterar")
 	}
@@ -123,25 +124,25 @@ func (i *iterador) Siguiente(){
 }
 
 // HaySiguiente devuelve verdadero si todavía hay algun elemento de la lista por ver, en caso contrario devuelve falso
-func (i *iterador) HaySiguiente() bool{
+func (i *iterador[T]) HaySiguiente() bool{
 	return i.actual != nil
 }
 
 // Insertar inserta un elemento a la lista en donde este posicionado el iterador.
-func (i *iterador) Insertar(dato T){
+func (i *iterador[T]) Insertar(dato T){
 	nodo:= crearNodo(dato)
 	if i.HaySiguiente(){
-		nodo.prox = i.VerActual()
+		nodo.prox = i.actual
 	}
 	i.actual = nodo
 	if i.anterior !=nil{
-		i.anterior.prox = i.VerActual()
+		i.anterior.prox = i.actual
 	}
 	i.largo++
 }
 
 // Borrar borra el elemento de la lista en donde este posicionado el iterador, y ademas devuelve el valor de ese elemento.
-func (i *iterador) Borrar() T{
+func (i *iterador[T]) Borrar() T{
 	if !i.HaySiguiente(){
 		panic("El iterador termino de iterar")
 	}

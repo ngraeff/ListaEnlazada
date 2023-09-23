@@ -7,9 +7,9 @@ type listaEnlazada[T any] struct {
 }
 
 type iterador[T any] struct{
+	lista *listaEnlazada[T]
 	actual *nodoLista[T]
 	anterior *nodoLista[T]
-	largo int
 }
 
 type nodoLista[T any] struct {
@@ -93,11 +93,7 @@ func (l *listaEnlazada[T]) BorrarPrimero() T{
 
 // Iterador crea un iterador de la lista externo.
 func (l *listaEnlazada[T]) Iterador() IteradorLista[T]{
-	if l.EstaVacia(){
-		panic("La lista esta vacia") 
-	}
-	
-	return &iterador[T]{l.primero,nil,l.Largo()}
+	return &iterador[T]{l,l.primero,nil}
 }
 
 // VerActual devuelve el elemento en donde este posicionado el iterador.
@@ -131,18 +127,19 @@ func (i *iterador[T]) HaySiguiente() bool{
 // Insertar inserta un elemento a la lista en donde este posicionado el iterador.
 func (i *iterador[T]) Insertar(dato T){
 	nodo:= crearNodo(dato)
-	if i.HaySiguiente(){
-		nodo.prox = i.actual
+	nodo.prox= i.actual
+	if i.anterior== nil{
+		i.lista.primero = nodo
+	}
+	if !i.HaySiguiente(){
+		i.lista.ultimo = nodo
 	}
 	i.actual = nodo
-	if i.anterior !=nil{
-		i.anterior.prox = i.actual
-	}
-	i.largo++
+	i.lista.largo ++
 }
 
 // Borrar borra el elemento de la lista en donde este posicionado el iterador, y ademas devuelve el valor de ese elemento.
-func (i *iterador[T]) Borrar() T{
+func (i *iterador[T])Borrar() T{
 	if !i.HaySiguiente(){
 		panic("El iterador termino de iterar")
 	}
@@ -151,6 +148,6 @@ func (i *iterador[T]) Borrar() T{
 		i.anterior.prox = i.actual.prox
 	}
 	i.actual = i.actual.prox
-	i.largo--
+	i.lista.largo--
 	return dato
 }

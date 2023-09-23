@@ -53,3 +53,15 @@ func TestVolumenLista(t *testing.T){
 }
 
 //Test Iterador Externo
+
+func TestIteradorExternoListaVacia(t *testing.T){
+	lista := TDALista.CrearListaEnlazada[int]()
+	iter:=lista.Iterador()
+	iter.Insertar(2)
+	require.EqualValues(t,2, iter.VerActual())
+	require.EqualValues(t,2,lista.VerPrimero())
+	require.EqualValues(t,2,lista.VerUltimo())
+	require.EqualValues(t,2,iter.Borrar())
+	require.False(t, iter.HaySiguiente())
+	require.PanicsWithValue(t, "El iterador termino de iterar", func() { iter.Siguiente() })
+}

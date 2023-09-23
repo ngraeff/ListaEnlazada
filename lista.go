@@ -26,7 +26,7 @@ type Lista[T any] interface {
 	// Iterar crea un iterador de la lista interno.
 	Iterar(visitar func(T) bool)
 
-	// Iterador crea un iterador de la lista externo.
+	// Iterador crea un iterador de la lista externo.Si está vacía, entra en pánico con un mensaje "La lista esta vacia".
 	Iterador() IteradorLista[T]
 }
 
@@ -35,7 +35,7 @@ type IteradorLista[T any] interface {
 	// VerActual devuelve el elemento en donde este posicionado el iterador.
 	VerActual() T
 
-	// HaySiguiente devuelve verdadero si todavía hay algun elemento de la lista por ver, en caso contrario devuelve falso
+	// HaySiguiente devuelve verdadero si todavía hay algun elemento de la lista por ver, en caso contrario devuelve falso.
 	HaySiguiente() bool
 
 	// Siguiente modifica la posicion del iterador al siguiente elemento.

@@ -91,10 +91,23 @@ func (l *listaEnlazada[T]) BorrarPrimero() T{
 	return prime.dato
 }
 
+// Iterar pasa por cada uno de los elementos de la lista en orden hasta acabarla
+func (l *listaEnlazada[T]) Iterar(visitar func(T) bool) {
+	actual := l.primero
+	for actual != nil {
+		continuar := visitar(actual.dato)
+		if !continuar {
+			break
+		}
+		actual = actual.prox
+	}
+}
+
 // Iterador crea un iterador de la lista externo.
 func (l *listaEnlazada[T]) Iterador() IteradorLista[T]{
 	return &iterador[T]{l,l.primero,nil}
 }
+
 
 // VerActual devuelve el elemento en donde este posicionado el iterador.
 func (i *iterador[T]) VerActual() T{
@@ -111,11 +124,7 @@ func (i *iterador[T]) Siguiente(){
 		panic("El iterador termino de iterar")
 	}
 	i.anterior = i.actual
-	if i.actual.prox == nil{
-		i.actual = nil
-	}else{
-		i.actual=i.actual.prox
-	}
+	i.actual = i.actual.prox
 	
 }
 

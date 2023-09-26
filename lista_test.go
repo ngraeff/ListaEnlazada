@@ -102,14 +102,18 @@ func TestAgregarElementoConIterador(t *testing.T) {
 // Test borra un elemento del medio
 func TestEliminarElementoDelMedio(t *testing.T) {
 	lista := TDALista.CrearListaEnlazada[int]()
-	lista.InsertarUltimo(2)
-	lista.InsertarUltimo(3)
-	lista.InsertarUltimo(4)
-	lista.InsertarUltimo(5)
 	iter := lista.Iterador()
+	iter.Insertar(1)
+	iter.Insertar(2)
+	iter.Insertar(3)
+	iter.Insertar(4)
+	iter.Insertar(5)
+	require.Equal(t, 5, iter.VerActual())
 	iter.Siguiente()
+	iter.Siguiente()
+	require.Equal(t, 3, iter.VerActual())
 	require.Equal(t, 3, iter.Borrar())
-	require.NotEqual(t, 3, iter.VerActual())
+	require.Equal(t, 2, iter.VerActual())
 }
 
 // Test Iterador con funcion visitar

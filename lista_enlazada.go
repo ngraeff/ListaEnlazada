@@ -28,72 +28,79 @@ func crearNodo[T any](dato T) *nodoLista[T] {
 }
 
 // Largo devuelve la cantidad de elementos de la lista.
-func (l *listaEnlazada[T]) Largo() int {
-	return l.largo
+func (lista *listaEnlazada[T]) Largo() int {
+	return lista.largo
 }
 
 // EstaVacia devuelve verdadero si la lista no tiene elementos encolados, false en caso contrario.
-func (l *listaEnlazada[T]) EstaVacia() bool {
-	return l.Largo() == 0
+func (lista *listaEnlazada[T]) EstaVacia() bool {
+	return lista.Largo() == 0
 }
 
 // InsertarPrimero agrega un nuevo elemento a le lista en el primer lugar.
 
-func (l *listaEnlazada[T]) InsertarPrimero(dato T) {
+func (lista *listaEnlazada[T]) InsertarPrimero(dato T) {
 	nodo := crearNodo(dato)
-	if l.EstaVacia() {
-		l.ultimo = nodo
+	if lista.EstaVacia() {
+		lista.ultimo = nodo
 	} else {
-		nodo.prox = l.primero
+		nodo.prox = lista.primero
 	}
-	l.primero = nodo
-	l.largo++
+	lista.primero = nodo
+	lista.largo++
 }
 
 // InsertarUltimo agrega un nuevo elemento a le lista en el último lugar.
-func (l *listaEnlazada[T]) InsertarUltimo(dato T) {
+func (lista *listaEnlazada[T]) InsertarUltimo(dato T) {
 	nodo := crearNodo(dato)
 
-	if l.EstaVacia() {
-		l.primero = nodo
+	if lista.EstaVacia() {
+		lista.primero = nodo
 	} else {
-		l.ultimo.prox = nodo
+		lista.ultimo.prox = nodo
 	}
-	l.ultimo = nodo
-	l.largo++
+	lista.ultimo = nodo
+	lista.largo++
 }
 
 // VerPrimero devuelve el valor del primer elemento de la lista. Si está vacía, entra en pánico con un mensaje "La lista esta vacia".
-func (l *listaEnlazada[T]) VerPrimero() T {
-	if l.EstaVacia() {
+func (lista *listaEnlazada[T]) VerPrimero() T {
+	if lista.EstaVacia() {
 		panic("La lista esta vacia")
 	}
-	return l.primero.dato
+	return lista.primero.dato
 }
 
 // VerUltimo devuelve el valor del ultimo elemento de la lista.Si está vacía, entra en pánico con un mensaje "La lista esta vacia".
-func (l *listaEnlazada[T]) VerUltimo() T {
-	if l.EstaVacia() {
+func (lista *listaEnlazada[T]) VerUltimo() T {
+	if lista.EstaVacia() {
 		panic("La lista esta vacia")
 	}
-	return l.ultimo.dato
+	return lista.ultimo.dato
 }
 
 // BorrarPrimero borra el primer elemento de la lista y devuelve ese valor.  Si está vacía, entra en pánico con un mensaje "La lista esta vacia".
-func (l *listaEnlazada[T]) BorrarPrimero() T {
-	if l.EstaVacia() {
+func (lista *listaEnlazada[T]) BorrarPrimero() T {
+	if lista.EstaVacia() {
 		panic("La lista esta vacia")
 	}
-	prime := l.primero
-	l.primero = prime.prox
-	l.largo--
+	primero := lista.primero
+	if lista.primero.prox== nil{
+		lista.ultimo = nil
+		lista.primero = nil
+	}else{
+		lista.primero = primero.prox
+	}
+	
+	
+	lista.largo--
 
-	return prime.dato
+	return primero.dato
 }
 
 // Iterar pasa por cada uno de los elementos de la lista en orden hasta acabarla
-func (l *listaEnlazada[T]) Iterar(visitar func(T) bool) {
-	actual := l.primero
+func (lista *listaEnlazada[T]) Iterar(visitar func(T) bool) {
+	actual := lista.primero
 	for actual != nil {
 		continuar := visitar(actual.dato)
 		if !continuar {
@@ -104,74 +111,72 @@ func (l *listaEnlazada[T]) Iterar(visitar func(T) bool) {
 }
 
 // Iterador crea un iterador de la lista externo.
-func (l *listaEnlazada[T]) Iterador() IteradorLista[T] {
-	return &iterador[T]{l, l.primero, nil}
+func (lista *listaEnlazada[T]) Iterador() IteradorLista[T] {
+	return &iterador[T]{lista, lista.primero, nil}
 }
 
 // VerActual devuelve el elemento en donde este posicionado el iterador.
-func (i *iterador[T]) VerActual() T {
-	if !i.HaySiguiente() {
+func (iterador *iterador[T]) VerActual() T {
+	if !iterador.HaySiguiente() {
 		panic("El iterador termino de iterar")
 	}
-	return i.actual.dato
+	return iterador.actual.dato
 }
 
 // Siguiente modifica la posicion del iterador al siguiente elemento.
-func (i *iterador[T]) Siguiente() {
-	if !i.HaySiguiente() {
+func (iterador *iterador[T]) Siguiente() {
+	if !iterador.HaySiguiente() {
 		panic("El iterador termino de iterar")
 	}
-	i.anterior = i.actual
-	i.actual = i.actual.prox
+	iterador.anterior = iterador.actual
+	iterador.actual = iterador.actual.prox
 
 }
 
 // HaySiguiente devuelve verdadero si todavía hay algun elemento de la lista por ver, en caso contrario devuelve falso
-func (i *iterador[T]) HaySiguiente() bool {
-	if i.actual == nil && i.anterior != i.lista.ultimo {
-		i.actual = i.lista.ultimo
+func (iterador *iterador[T]) HaySiguiente() bool {
+	if iterador.actual == nil && iterador.anterior != iterador.lista.ultimo {
+		iterador.actual = iterador.lista.ultimo
 		return true
 	}
-	return i.actual != nil
+	return iterador.actual != nil
 }
 
 // Insertar inserta un elemento a la lista en donde este posicionado el iterador.
-func (i *iterador[T]) Insertar(dato T) {
+func (iterador *iterador[T]) Insertar(dato T) {
 	nodo := crearNodo(dato)
-	nodo.prox = i.actual
-	if i.anterior == nil {
-		i.lista.primero = nodo
+	nodo.prox = iterador.actual
+	if iterador.anterior == nil {
+		iterador.lista.primero = nodo
+	} else{
+		iterador.anterior.prox = nodo
 	}
-	if !i.HaySiguiente() {
-		i.lista.ultimo = nodo
+	if !iterador.HaySiguiente() {
+		iterador.lista.ultimo = nodo
 	}
-	if i.anterior != nil {
-		i.anterior.prox = nodo
-	}
-
-	i.actual = nodo
-	i.lista.largo++
+	iterador.actual = nodo
+	iterador.lista.largo++
 }
 
 // Borrar borra el elemento de la lista en donde este posicionado el iterador, y ademas devuelve el valor de ese elemento.
-func (i *iterador[T]) Borrar() T {
-	if !i.HaySiguiente() {
+func (iterador *iterador[T]) Borrar() T {
+	if !iterador.HaySiguiente() {
 		panic("El iterador termino de iterar")
 	}
-	dato := i.VerActual()
+	dato := iterador.VerActual()
 
-	if i.anterior == nil { //Primer Elemento
-		i.lista.primero = i.actual.prox
+	if iterador.anterior == nil { //Primer Elemento
+		iterador.lista.primero = iterador.actual.prox
 	}
-	if i.actual.prox == nil { //Ultimo Elemento
-		i.lista.ultimo = i.anterior
+	if iterador.actual.prox == nil { //Ultimo Elemento
+		iterador.lista.ultimo = iterador.anterior
 	}
 
-	if i.anterior != nil { //Cualquier Elemento excepto el primero
-		i.anterior.prox = i.actual.prox
+	if iterador.anterior != nil { //Cualquier Elemento excepto el primero
+		iterador.anterior.prox = iterador.actual.prox
 	}
-	i.actual = i.actual.prox
+	iterador.actual = iterador.actual.prox
 
-	i.lista.largo--
+	iterador.lista.largo--
 	return dato
 }

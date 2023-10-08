@@ -85,14 +85,13 @@ func (lista *listaEnlazada[T]) BorrarPrimero() T {
 		panic("La lista esta vacia")
 	}
 	primero := lista.primero
-	if lista.primero.prox== nil{
+	if lista.primero.prox == nil {
 		lista.ultimo = nil
 		lista.primero = nil
-	}else{
+	} else {
 		lista.primero = primero.prox
 	}
-	
-	
+
 	lista.largo--
 
 	return primero.dato
@@ -148,7 +147,7 @@ func (iterador *iterador[T]) Insertar(dato T) {
 	nodo.prox = iterador.actual
 	if iterador.anterior == nil {
 		iterador.lista.primero = nodo
-	} else{
+	} else {
 		iterador.anterior.prox = nodo
 	}
 	if !iterador.HaySiguiente() {

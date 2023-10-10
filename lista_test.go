@@ -3,7 +3,7 @@ package lista_test
 import (
 	TDALista "tdas/lista"
 	"testing"
-
+	
 	"github.com/stretchr/testify/require"
 )
 
@@ -292,7 +292,11 @@ func TestVolumenIteradorExterno(t *testing.T) {
 		iterador.Insertar(i)
 		require.EqualValues(t, i, lista.VerPrimero())
 	}
-
+	iterador2 := lista.Iterador()
+	for i:=valorTope;i>=0;i--{
+		require.EqualValues(t,i,iterador2.VerActual())
+		iterador2.Siguiente()
+	}
 	require.EqualValues(t, 1001, lista.Largo())
 	require.EqualValues(t, 1000, lista.VerPrimero())
 	require.EqualValues(t, 0, lista.VerUltimo())
@@ -314,7 +318,6 @@ func TestIterarInternoVolumen(t *testing.T) {
 	target := 10
 	buscar := func(dato int) bool {
 		if target == dato {
-			require.Equal(t, target, dato)
 			return false
 		}
 		return true
